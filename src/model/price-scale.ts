@@ -262,7 +262,6 @@ export class PriceScale {
 			this._logicalToCoordinate.bind(this),
 			options.boundaryMarksVisible ? {
 				getPadding: () => this.fontSize() / 2,
-				getMinDist: () => this.fontSize() * 2,
 			} : undefined
 		);
 	}
@@ -846,7 +845,6 @@ export class PriceScale {
 			this._logicalToCoordinate.bind(this),
 			this._options.boundaryMarksVisible ? {
 				getPadding: () => this.fontSize() / 2,
-				getMinDist: () => this.fontSize() * 2,
 			} : undefined
 		);
 
