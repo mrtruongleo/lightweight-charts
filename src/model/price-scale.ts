@@ -31,7 +31,7 @@ import {
 	toPercent,
 	toPercentRange,
 } from './price-scale-conversions';
-import { PriceTickMarkBuilder } from './price-tick-mark-builder';
+import { EdgeMarksOptions, PriceTickMarkBuilder } from './price-tick-mark-builder';
 import { RangeImpl } from './range-impl';
 import { sortSources } from './sort-sources';
 import { SeriesItemsIndexesRange, TimePointIndex } from './time-data';
@@ -196,7 +196,7 @@ export interface PriceScaleOptions {
 	/**
 	 * Boundary marks are the marks that are drawn at the top and bottom of the price scale.
 	 */
-	boundaryMarksVisible: boolean;
+	ensureEdgeTickMarksVisible: boolean;
 }
 
 interface RangeCache {
@@ -260,9 +260,7 @@ export class PriceScale {
 			100,
 			this._coordinateToLogical.bind(this),
 			this._logicalToCoordinate.bind(this),
-			options.boundaryMarksVisible ? {
-				getPadding: () => this.fontSize() / 2,
-			} : undefined
+			this._getEdgeMarksOptions()
 		);
 	}
 
@@ -843,9 +841,7 @@ export class PriceScale {
 			base,
 			this._coordinateToLogical.bind(this),
 			this._logicalToCoordinate.bind(this),
-			this._options.boundaryMarksVisible ? {
-				getPadding: () => this.fontSize() / 2,
-			} : undefined
+			this._getEdgeMarksOptions()
 		);
 
 		this._markBuilder.rebuildTickMarks();
@@ -976,6 +972,11 @@ export class PriceScale {
 			}
 		}
 
+		if (this._visibleEdgeMarks()) {
+			marginAbove = Math.max(marginAbove, this._getEdgeMarksPadding());
+			marginBelow = Math.max(marginBelow, this._getEdgeMarksPadding());
+		}
+
 		if (marginAbove !== this._marginAbove || marginBelow !== this._marginBelow) {
 			this._marginAbove = marginAbove;
 			this._marginBelow = marginBelow;
@@ -1058,5 +1059,17 @@ export class PriceScale {
 
 	private _formatPercentage(percentage: number, fallbackFormatter?: IPriceFormatter): string {
 		return this._formatValue(percentage, this._localizationOptions.percentageFormatter, fallbackFormatter);
+	}
+
+	private _visibleEdgeMarks(): boolean {
+		return this._options.ensureEdgeTickMarksVisible;
+	}
+
+	private _getEdgeMarksPadding(): number {
+		return this.fontSize() / 2;
+	}
+
+	private _getEdgeMarksOptions(): undefined | EdgeMarksOptions {
+		return this._visibleEdgeMarks() ? { getPadding: () => this._getEdgeMarksPadding() } : undefined;
 	}
 }
