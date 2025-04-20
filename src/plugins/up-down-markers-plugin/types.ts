@@ -25,7 +25,7 @@ export interface SeriesUpDownMarker<T = Time> {
 	/**
 	 * The price value for the data point.
 	 */
-	value: number;
+	value: number | null;
 
 	/**
 	 * The direction of the price change.

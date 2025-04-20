@@ -1,11 +1,22 @@
 import { IChartApiBase } from '../../api/ichart-api';
 import { ISeriesApi } from '../../api/iseries-api';
-import { ISeriesPrimitive, SeriesAttachedParameter } from '../../api/iseries-primitive-api';
+import {
+	ISeriesPrimitive,
+	SeriesAttachedParameter,
+} from '../../api/iseries-primitive-api';
 
 import { ensureDefined } from '../../helpers/assertions';
 
-import { isFulfilledData, isWhitespaceData, LineData, SeriesDataItemTypeMap } from '../../model/data-consumer';
-import { IHorzScaleBehavior, InternalHorzScaleItemKey } from '../../model/ihorz-scale-behavior';
+import {
+	isFulfilledData,
+	isWhitespaceData,
+	LineData,
+	SeriesDataItemTypeMap,
+} from '../../model/data-consumer';
+import {
+	IHorzScaleBehavior,
+	InternalHorzScaleItemKey,
+} from '../../model/ihorz-scale-behavior';
 import { IPrimitivePaneView } from '../../model/ipane-primitive';
 
 import { ExpiringMarkerManager } from './expiring-markers-manager';
@@ -28,8 +39,9 @@ export class UpDownMarkersPrimitive<
 	TData extends SeriesDataItemTypeMap<HorzScaleItem>[UpDownMarkersSupportedSeriesTypes] = SeriesDataItemTypeMap<HorzScaleItem>['Line']
 > implements ISeriesPrimitive<HorzScaleItem> {
 	private _chart: IChartApiBase<HorzScaleItem> | undefined = undefined;
-	private _series: ISeriesApi<UpDownMarkersSupportedSeriesTypes, HorzScaleItem> | undefined =
-		undefined;
+	private _series:
+		| ISeriesApi<UpDownMarkersSupportedSeriesTypes, HorzScaleItem>
+		| undefined = undefined;
 	private _paneViews: MarkersPrimitivePaneView<
 		HorzScaleItem,
 		UpDownMarkersSupportedSeriesTypes
@@ -40,10 +52,10 @@ export class UpDownMarkersPrimitive<
 	private _options: UpDownMarkersPluginOptions;
 	private _managedDataPoints: Map<InternalHorzScaleItemKey, number> = new Map();
 
-	public constructor(
-		options: Partial<UpDownMarkersPluginOptions>
-	) {
-		this._markersManager = new ExpiringMarkerManager(() => this.requestUpdate());
+	public constructor(options: Partial<UpDownMarkersPluginOptions>) {
+		this._markersManager = new ExpiringMarkerManager(() =>
+			this.requestUpdate()
+		);
 		this._options = {
 			...upDownMarkersPluginOptionDefaults,
 			...options,
@@ -78,14 +90,12 @@ export class UpDownMarkersPrimitive<
 	}
 
 	public attached(params: SeriesAttachedParameter<HorzScaleItem>): void {
-		const {
-			chart,
-			series,
-			requestUpdate,
-			horzScaleBehavior,
-		} = params;
+		const { chart, series, requestUpdate, horzScaleBehavior } = params;
 		this._chart = chart;
-		this._series = series as ISeriesApi<UpDownMarkersSupportedSeriesTypes, HorzScaleItem>;
+		this._series = series as ISeriesApi<
+			UpDownMarkersSupportedSeriesTypes,
+			HorzScaleItem
+		>;
 		this._horzScaleBehavior = horzScaleBehavior;
 		const seriesType = this._series.seriesType();
 		if (seriesType !== 'Area' && seriesType !== 'Line') {
@@ -114,14 +124,21 @@ export class UpDownMarkersPrimitive<
 		return ensureDefined(this._chart);
 	}
 
-	public series(): ISeriesApi<UpDownMarkersSupportedSeriesTypes, HorzScaleItem> {
+	public series(): ISeriesApi<
+		UpDownMarkersSupportedSeriesTypes,
+		HorzScaleItem
+	> {
 		return ensureDefined(this._series);
 	}
 
 	public updateAllViews(): void {
 		this._paneViews.forEach(
-			(pw: MarkersPrimitivePaneView<HorzScaleItem, UpDownMarkersSupportedSeriesTypes>) =>
-				pw.update(this.markers())
+			(
+				pw: MarkersPrimitivePaneView<
+					HorzScaleItem,
+					UpDownMarkersSupportedSeriesTypes
+				>
+			) => pw.update(this.markers())
 		);
 	}
 
@@ -139,7 +156,9 @@ export class UpDownMarkersPrimitive<
 		if (horzBehaviour) {
 			data.forEach((d: TData) => {
 				if (isFulfilledData(d) && isLineData(d, seriesType)) {
-					this._managedDataPoints.set(horzBehaviour.key(d.time), d.value);
+					if (d.value !== null) {
+						this._managedDataPoints.set(horzBehaviour.key(d.time), d.value);
+					}
 				}
 			});
 		}
@@ -177,9 +196,9 @@ export class UpDownMarkersPrimitive<
 	}
 }
 
-function getSign(newValue: number, oldValue: number): 1 | 0 | -1 {
+function getSign(newValue: number | null, oldValue: number): 1 | 0 | -1 {
 	if (newValue === oldValue) {
 		return 0;
 	}
-	return newValue - oldValue > 0 ? 1 : -1;
+	return (newValue ?? 0) - oldValue > 0 ? 1 : -1;
 }

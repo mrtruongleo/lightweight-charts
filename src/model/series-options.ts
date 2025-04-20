@@ -80,7 +80,9 @@ export interface CandlestickStyleOptions {
 	wickDownColor: string;
 }
 
-export function fillUpDownCandlesticksColors(options: Partial<CandlestickStyleOptions>): void {
+export function fillUpDownCandlesticksColors(
+	options: Partial<CandlestickStyleOptions>
+): void {
 	if (options.borderColor !== undefined) {
 		options.borderUpColor = options.borderColor;
 		options.borderDownColor = options.borderColor;
@@ -668,7 +670,9 @@ export interface AutoscaleInfo {
  *
  * @param baseImplementation - The default implementation of autoscale algorithm, you can use it to adjust the result.
  */
-type AutoscaleInfoProvider = (baseImplementation: () => AutoscaleInfo | null) => AutoscaleInfo | null;
+type AutoscaleInfoProvider = (
+	baseImplementation: () => AutoscaleInfo | null
+) => AutoscaleInfo | null;
 
 /**
  * Represents options common for all types of series
@@ -856,7 +860,8 @@ export type BaselineSeriesOptions = SeriesOptions<BaselineStyleOptions>;
 /**
  * Represents baseline series options where all properties are options.
  */
-export type BaselineSeriesPartialOptions = SeriesPartialOptions<BaselineStyleOptions>;
+export type BaselineSeriesPartialOptions =
+	SeriesPartialOptions<BaselineStyleOptions>;
 
 /**
  * Represents bar series options.
@@ -874,7 +879,8 @@ export type CandlestickSeriesOptions = SeriesOptions<CandlestickStyleOptions>;
 /**
  * Represents candlestick series options where all properties are optional.
  */
-export type CandlestickSeriesPartialOptions = SeriesPartialOptions<CandlestickStyleOptions>;
+export type CandlestickSeriesPartialOptions =
+	SeriesPartialOptions<CandlestickStyleOptions>;
 
 /**
  * Represents histogram series options.
@@ -883,7 +889,8 @@ export type HistogramSeriesOptions = SeriesOptions<HistogramStyleOptions>;
 /**
  * Represents histogram series options where all properties are optional.
  */
-export type HistogramSeriesPartialOptions = SeriesPartialOptions<HistogramStyleOptions>;
+export type HistogramSeriesPartialOptions =
+	SeriesPartialOptions<HistogramStyleOptions>;
 
 /**
  * Represents a custom series options.
@@ -892,7 +899,8 @@ export type CustomSeriesOptions = SeriesOptions<CustomStyleOptions>;
 /**
  * Represents a custom series options where all properties are optional.
  */
-export type CustomSeriesPartialOptions = SeriesPartialOptions<CustomStyleOptions>;
+export type CustomSeriesPartialOptions =
+	SeriesPartialOptions<CustomStyleOptions>;
 
 /**
  * Represents line series options.

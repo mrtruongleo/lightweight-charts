@@ -22,7 +22,10 @@ export const lineStyleDefaults: LineStyleOptions = {
 	pointMarkersVisible: false,
 };
 
-const createPaneView = (series: ISeries<'Line'>, model: IChartModelBase): IUpdatablePaneView => new SeriesLinePaneView(series, model);
+const createPaneView = (
+	series: ISeries<'Line'>,
+	model: IChartModelBase
+): IUpdatablePaneView => new SeriesLinePaneView(series, model);
 
 export const createLineSeries = (): SeriesDefinition<'Line'> => {
 	const definition: SeriesDefinitionInternal<'Line'> = {
@@ -37,4 +40,3 @@ export const createLineSeries = (): SeriesDefinition<'Line'> => {
 	return definition as SeriesDefinition<'Line'>;
 };
 export const lineSeries: SeriesDefinition<'Line'> = createLineSeries();
-

@@ -21,6 +21,10 @@ export const enum LineType {
 	 * A curved line.
 	 */
 	Curved,
+	/**
+	 * A gapped line.
+	 */
+	WithGaps,
 }
 
 /**
@@ -63,7 +67,10 @@ export const enum LineStyle {
 	SparseDotted = 4,
 }
 
-export function setLineStyle(ctx: CanvasRenderingContext2D, style: LineStyle): void {
+export function setLineStyle(
+	ctx: CanvasRenderingContext2D,
+	style: LineStyle
+): void {
 	const dashPatterns = {
 		[LineStyle.Solid]: [],
 		[LineStyle.Dotted]: [ctx.lineWidth, ctx.lineWidth],
@@ -76,23 +83,36 @@ export function setLineStyle(ctx: CanvasRenderingContext2D, style: LineStyle): v
 	ctx.setLineDash(dashPattern);
 }
 
-export function drawHorizontalLine(ctx: CanvasRenderingContext2D, y: number, left: number, right: number): void {
+export function drawHorizontalLine(
+	ctx: CanvasRenderingContext2D,
+	y: number,
+	left: number,
+	right: number
+): void {
 	ctx.beginPath();
-	const correction = (ctx.lineWidth % 2) ? 0.5 : 0;
+	const correction = ctx.lineWidth % 2 ? 0.5 : 0;
 	ctx.moveTo(left, y + correction);
 	ctx.lineTo(right, y + correction);
 	ctx.stroke();
 }
 
-export function drawVerticalLine(ctx: CanvasRenderingContext2D, x: number, top: number, bottom: number): void {
+export function drawVerticalLine(
+	ctx: CanvasRenderingContext2D,
+	x: number,
+	top: number,
+	bottom: number
+): void {
 	ctx.beginPath();
-	const correction = (ctx.lineWidth % 2) ? 0.5 : 0;
+	const correction = ctx.lineWidth % 2 ? 0.5 : 0;
 	ctx.moveTo(x + correction, top);
 	ctx.lineTo(x + correction, bottom);
 	ctx.stroke();
 }
 
-export function strokeInPixel(ctx: CanvasRenderingContext2D, drawFunction: () => void): void {
+export function strokeInPixel(
+	ctx: CanvasRenderingContext2D,
+	drawFunction: () => void
+): void {
 	ctx.save();
 	if (ctx.lineWidth % 2) {
 		ctx.translate(0.5, 0.5);

@@ -5,12 +5,25 @@ import { ensureNever, ensureNotNull } from '../../helpers/assertions';
 import { isNumber } from '../../helpers/strict-type-checks';
 
 import { Coordinate } from '../../model/coordinate';
-import { AreaData, BarData, BaselineData, CandlestickData, HistogramData, LineData, SeriesDataItemTypeMap, SingleValueData } from '../../model/data-consumer';
+import {
+	AreaData,
+	BarData,
+	BaselineData,
+	CandlestickData,
+	HistogramData,
+	LineData,
+	SeriesDataItemTypeMap,
+	SingleValueData,
+} from '../../model/data-consumer';
 import { IPrimitivePaneView } from '../../model/ipane-primitive';
 import { MismatchDirection } from '../../model/plot-list';
 import { RangeImpl } from '../../model/range-impl';
 import { SeriesType } from '../../model/series-options';
-import { Logical, TimePointIndex, visibleTimedValues } from '../../model/time-data';
+import {
+	Logical,
+	TimePointIndex,
+	visibleTimedValues,
+} from '../../model/time-data';
 import { UpdateType } from '../../views/pane/iupdatable-pane-view';
 
 import {
@@ -18,7 +31,11 @@ import {
 	SeriesMarkerRendererDataItem,
 	SeriesMarkersRenderer,
 } from './renderer';
-import { InternalSeriesMarker, SeriesMarkerPosition, SeriesMarkerPricePosition } from './types';
+import {
+	InternalSeriesMarker,
+	SeriesMarkerPosition,
+	SeriesMarkerPricePosition,
+} from './types';
 import {
 	calculateShapeHeight,
 	shapeMargin as calculateShapeMargin,
@@ -33,11 +50,20 @@ interface Offsets {
 	belowBar: number;
 }
 
-function isPriceMarker(position: SeriesMarkerPosition): position is SeriesMarkerPricePosition {
-	return position === 'atPriceTop' || position === 'atPriceBottom' || position === 'atPriceMiddle';
+function isPriceMarker(
+	position: SeriesMarkerPosition
+): position is SeriesMarkerPricePosition {
+	return (
+		position === 'atPriceTop' ||
+		position === 'atPriceBottom' ||
+		position === 'atPriceMiddle'
+	);
 }
 
-function getPrice(seriesData: SeriesDataItemTypeMap<unknown>[SeriesType], marker: InternalSeriesMarker<TimePointIndex>): number | undefined {
+function getPrice(
+	seriesData: SeriesDataItemTypeMap<unknown>[SeriesType],
+	marker: InternalSeriesMarker<TimePointIndex>
+): number | null | undefined {
 	if (isPriceMarker(marker.position) && marker.price !== undefined) {
 		return marker.price;
 	}
@@ -76,7 +102,8 @@ function fillSizeAndY<HorzScaleItem>(
 	const ignoreOffset = isPriceMarker(marker.position);
 	const timeScale = chart.timeScale();
 	const sizeMultiplier = isNumber(marker.size) ? Math.max(marker.size, 0) : 1;
-	const shapeSize = calculateShapeHeight(timeScale.options().barSpacing) * sizeMultiplier;
+	const shapeSize =
+		calculateShapeHeight(timeScale.options().barSpacing) * sizeMultiplier;
 
 	const halfSize = shapeSize / 2;
 	rendererItem.size = shapeSize;
@@ -87,16 +114,23 @@ function fillSizeAndY<HorzScaleItem>(
 		case 'atPriceMiddle': {
 			rendererItem.y = ensureNotNull(series.priceToCoordinate(price));
 			if (rendererItem.text !== undefined) {
-				rendererItem.text.y = rendererItem.y + halfSize + shapeMargin + textHeight * (0.5 + Constants.TextMargin) as Coordinate;
+				rendererItem.text.y = (rendererItem.y +
+					halfSize +
+					shapeMargin +
+					textHeight * (0.5 + Constants.TextMargin)) as Coordinate;
 			}
 			return;
 		}
 		case 'aboveBar':
 		case 'atPriceTop': {
 			const offset = ignoreOffset ? 0 : offsets.aboveBar;
-			rendererItem.y = (ensureNotNull(series.priceToCoordinate(price)) - halfSize - offset) as Coordinate;
+			rendererItem.y = (ensureNotNull(series.priceToCoordinate(price)) -
+				halfSize -
+				offset) as Coordinate;
 			if (rendererItem.text !== undefined) {
-				rendererItem.text.y = rendererItem.y - halfSize - textHeight * (0.5 + Constants.TextMargin) as Coordinate;
+				rendererItem.text.y = (rendererItem.y -
+					halfSize -
+					textHeight * (0.5 + Constants.TextMargin)) as Coordinate;
 				offsets.aboveBar += textHeight * (1 + 2 * Constants.TextMargin);
 			}
 			if (!ignoreOffset) {
@@ -107,9 +141,14 @@ function fillSizeAndY<HorzScaleItem>(
 		case 'belowBar':
 		case 'atPriceBottom': {
 			const offset = ignoreOffset ? 0 : offsets.belowBar;
-			rendererItem.y = (ensureNotNull(series.priceToCoordinate(price)) + halfSize + offset) as Coordinate;
+			rendererItem.y = (ensureNotNull(series.priceToCoordinate(price)) +
+				halfSize +
+				offset) as Coordinate;
 			if (rendererItem.text !== undefined) {
-				rendererItem.text.y = (rendererItem.y + halfSize + shapeMargin + textHeight * (0.5 + Constants.TextMargin)) as Coordinate;
+				rendererItem.text.y = (rendererItem.y +
+					halfSize +
+					shapeMargin +
+					textHeight * (0.5 + Constants.TextMargin)) as Coordinate;
 				offsets.belowBar += textHeight * (1 + 2 * Constants.TextMargin);
 			}
 			if (!ignoreOffset) {
@@ -124,9 +163,16 @@ function fillSizeAndY<HorzScaleItem>(
 
 function isValueData<HorzScaleItem>(
 	data: SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]
-): data is LineData<HorzScaleItem> | HistogramData<HorzScaleItem> | AreaData<HorzScaleItem> | BaselineData<HorzScaleItem> {
-	// eslint-disable-next-line no-restricted-syntax
-	return 'value' in data && typeof (data as unknown as SingleValueData).value === 'number';
+): data is
+	| LineData<HorzScaleItem>
+	| HistogramData<HorzScaleItem>
+	| AreaData<HorzScaleItem>
+	| BaselineData<HorzScaleItem> {
+	return (
+		/* eslint-disable-next-line no-restricted-syntax */
+		'value' in data &&
+		typeof (data as unknown as SingleValueData).value === 'number'
+	);
 }
 
 function isOhlcData<HorzScaleItem>(
@@ -136,7 +182,8 @@ function isOhlcData<HorzScaleItem>(
 	return 'open' in data && 'high' in data && 'low' in data && 'close' in data;
 }
 
-export class SeriesMarkersPaneView<HorzScaleItem> implements IPrimitivePaneView {
+export class SeriesMarkersPaneView<HorzScaleItem>
+	implements IPrimitivePaneView {
 	private readonly _series: ISeriesApi<SeriesType, HorzScaleItem>;
 	private readonly _chart: IChartApiBase<HorzScaleItem>;
 	private _data: SeriesMarkerRendererData;
@@ -147,7 +194,10 @@ export class SeriesMarkersPaneView<HorzScaleItem> implements IPrimitivePaneView 
 
 	private _renderer: SeriesMarkersRenderer = new SeriesMarkersRenderer();
 
-	public constructor(series: ISeriesApi<SeriesType, HorzScaleItem>, chart: IChartApiBase<HorzScaleItem>) {
+	public constructor(
+		series: ISeriesApi<SeriesType, HorzScaleItem>,
+		chart: IChartApiBase<HorzScaleItem>
+	) {
 		this._series = series;
 		this._chart = chart;
 		this._data = {
@@ -188,17 +238,19 @@ export class SeriesMarkersPaneView<HorzScaleItem> implements IPrimitivePaneView 
 		const timeScale = this._chart.timeScale();
 		const seriesMarkers = this._markers;
 		if (this._dataInvalidated) {
-			this._data.items = seriesMarkers.map<SeriesMarkerRendererDataItem>((marker: InternalSeriesMarker<TimePointIndex>) => ({
-				time: marker.time,
-				x: 0 as Coordinate,
-				y: 0 as Coordinate,
-				size: 0,
-				shape: marker.shape,
-				color: marker.color,
-				externalId: marker.id,
-				internalId: marker.internalId,
-				text: undefined,
-			}));
+			this._data.items = seriesMarkers.map<SeriesMarkerRendererDataItem>(
+				(marker: InternalSeriesMarker<TimePointIndex>) => ({
+					time: marker.time,
+					x: 0 as Coordinate,
+					y: 0 as Coordinate,
+					size: 0,
+					shape: marker.shape,
+					color: marker.color,
+					externalId: marker.id,
+					internalId: marker.internalId,
+					text: undefined,
+				})
+			);
 			this._dataInvalidated = false;
 		}
 
@@ -210,7 +262,10 @@ export class SeriesMarkersPaneView<HorzScaleItem> implements IPrimitivePaneView 
 		if (visibleBars === null) {
 			return;
 		}
-		const visibleBarsRange = new RangeImpl(Math.floor(visibleBars.from) as TimePointIndex, Math.ceil(visibleBars.to) as TimePointIndex);
+		const visibleBarsRange = new RangeImpl(
+			Math.floor(visibleBars.from) as TimePointIndex,
+			Math.ceil(visibleBars.to) as TimePointIndex
+		);
 		const firstValue = this._series.data()[0];
 		if (firstValue === null) {
 			return;
@@ -225,8 +280,16 @@ export class SeriesMarkersPaneView<HorzScaleItem> implements IPrimitivePaneView 
 			belowBar: shapeMargin,
 		};
 
-		this._data.visibleRange = visibleTimedValues(this._data.items, visibleBarsRange, true);
-		for (let index = this._data.visibleRange.from; index < this._data.visibleRange.to; index++) {
+		this._data.visibleRange = visibleTimedValues(
+			this._data.items,
+			visibleBarsRange,
+			true
+		);
+		for (
+			let index = this._data.visibleRange.from;
+			index < this._data.visibleRange.to;
+			index++
+		) {
 			const marker = seriesMarkers[index];
 			if (marker.time !== prevTimeIndex) {
 				// new bar, reset stack counter
@@ -236,7 +299,9 @@ export class SeriesMarkersPaneView<HorzScaleItem> implements IPrimitivePaneView 
 			}
 
 			const rendererItem = this._data.items[index];
-			rendererItem.x = ensureNotNull(timeScale.logicalToCoordinate(marker.time as unknown as Logical));
+			rendererItem.x = ensureNotNull(
+				timeScale.logicalToCoordinate(marker.time as unknown as Logical)
+			);
 			if (marker.text !== undefined && marker.text.length > 0) {
 				rendererItem.text = {
 					content: marker.text,
@@ -247,11 +312,23 @@ export class SeriesMarkersPaneView<HorzScaleItem> implements IPrimitivePaneView 
 				};
 			}
 
-			const dataAt = this._series.dataByIndex(marker.time, MismatchDirection.None);
+			const dataAt = this._series.dataByIndex(
+				marker.time,
+				MismatchDirection.None
+			);
 			if (dataAt === null) {
 				continue;
 			}
-			fillSizeAndY<HorzScaleItem>(rendererItem, marker, dataAt, offsets, layoutOptions.fontSize, shapeMargin, this._series, this._chart);
+			fillSizeAndY<HorzScaleItem>(
+				rendererItem,
+				marker,
+				dataAt,
+				offsets,
+				layoutOptions.fontSize,
+				shapeMargin,
+				this._series,
+				this._chart
+			);
 		}
 
 		this._invalidated = false;

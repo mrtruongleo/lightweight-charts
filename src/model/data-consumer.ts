@@ -35,7 +35,8 @@ export interface WhitespaceData<HorzScaleItem = Time> {
 /**
  * A base interface for a data point of single-value series.
  */
-export interface SingleValueData<HorzScaleItem = Time> extends WhitespaceData<HorzScaleItem> {
+export interface SingleValueData<HorzScaleItem = Time>
+	extends WhitespaceData<HorzScaleItem> {
 	/**
 	 * The time of the data.
 	 */
@@ -44,13 +45,14 @@ export interface SingleValueData<HorzScaleItem = Time> extends WhitespaceData<Ho
 	/**
 	 * Price value of the data.
 	 */
-	value: number;
+	value: number | null;
 }
 
 /**
  * Structure describing a single item of data for line series
  */
-export interface LineData<HorzScaleItem = Time> extends SingleValueData<HorzScaleItem> {
+export interface LineData<HorzScaleItem = Time>
+	extends SingleValueData<HorzScaleItem> {
 	/**
 	 * Optional color value for certain data item. If missed, color from options is used
 	 */
@@ -60,7 +62,8 @@ export interface LineData<HorzScaleItem = Time> extends SingleValueData<HorzScal
 /**
  * Structure describing a single item of data for histogram series
  */
-export interface HistogramData<HorzScaleItem = Time> extends SingleValueData<HorzScaleItem> {
+export interface HistogramData<HorzScaleItem = Time>
+	extends SingleValueData<HorzScaleItem> {
 	/**
 	 * Optional color value for certain data item. If missed, color from options is used
 	 */
@@ -70,7 +73,8 @@ export interface HistogramData<HorzScaleItem = Time> extends SingleValueData<Hor
 /**
  * Structure describing a single item of data for area series
  */
-export interface AreaData<HorzScaleItem = Time> extends SingleValueData<HorzScaleItem> {
+export interface AreaData<HorzScaleItem = Time>
+	extends SingleValueData<HorzScaleItem> {
 	/**
 	 * Optional line color value for certain data item. If missed, color from options is used
 	 */
@@ -90,7 +94,8 @@ export interface AreaData<HorzScaleItem = Time> extends SingleValueData<HorzScal
 /**
  * Structure describing a single item of data for baseline series
  */
-export interface BaselineData<HorzScaleItem = Time> extends SingleValueData<HorzScaleItem> {
+export interface BaselineData<HorzScaleItem = Time>
+	extends SingleValueData<HorzScaleItem> {
 	/**
 	 * Optional top area top fill color value for certain data item. If missed, color from options is used
 	 */
@@ -125,7 +130,8 @@ export interface BaselineData<HorzScaleItem = Time> extends SingleValueData<Horz
 /**
  * Represents a bar with a {@link Time} and open, high, low, and close prices.
  */
-export interface OhlcData<HorzScaleItem = Time> extends WhitespaceData<HorzScaleItem> {
+export interface OhlcData<HorzScaleItem = Time>
+	extends WhitespaceData<HorzScaleItem> {
 	/**
 	 * The bar time.
 	 */
@@ -162,7 +168,8 @@ export interface BarData<HorzScaleItem = Time> extends OhlcData<HorzScaleItem> {
 /**
  * Structure describing a single item of data for candlestick series
  */
-export interface CandlestickData<HorzScaleItem = Time> extends OhlcData<HorzScaleItem> {
+export interface CandlestickData<HorzScaleItem = Time>
+	extends OhlcData<HorzScaleItem> {
 	/**
 	 * Optional color value for certain data item. If missed, color from options is used
 	 */
@@ -177,23 +184,40 @@ export interface CandlestickData<HorzScaleItem = Time> extends OhlcData<HorzScal
 	wickColor?: string;
 }
 
-export function isWhitespaceData<HorzScaleItem = Time>(data: SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]): data is WhitespaceData<HorzScaleItem> {
-	return (data as Partial<BarData<HorzScaleItem>>).open === undefined && (data as Partial<LineData<HorzScaleItem>>).value === undefined;
+export function isWhitespaceData<HorzScaleItem = Time>(
+	data: SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]
+): data is WhitespaceData<HorzScaleItem> {
+	return (
+		(data as Partial<BarData<HorzScaleItem>>).open === undefined &&
+		(data as Partial<LineData<HorzScaleItem>>).value === undefined
+	);
 }
 
-export function isFulfilledData<HorzScaleItem, T extends SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]>(
+export function isFulfilledData<
+	HorzScaleItem,
+	T extends SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]
+>(
 	data: T
-): data is Extract<T, BarData<HorzScaleItem> | LineData<HorzScaleItem> | HistogramData<HorzScaleItem>> {
+): data is Extract<
+	T,
+	| BarData<HorzScaleItem>
+	| LineData<HorzScaleItem>
+	| HistogramData<HorzScaleItem>
+> {
 	return isFulfilledBarData(data) || isFulfilledLineData(data);
 }
 
-export function isFulfilledBarData<HorzScaleItem, T extends SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]>(
-	data: T
-): data is Extract<T, BarData<HorzScaleItem>> {
+export function isFulfilledBarData<
+	HorzScaleItem,
+	T extends SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]
+>(data: T): data is Extract<T, BarData<HorzScaleItem>> {
 	return (data as Partial<BarData<HorzScaleItem>>).open !== undefined;
 }
 
-export function isFulfilledLineData<HorzScaleItem, T extends SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]>(
+export function isFulfilledLineData<
+	HorzScaleItem,
+	T extends SeriesDataItemTypeMap<HorzScaleItem>[SeriesType]
+>(
 	data: T
 ): data is Extract<T, LineData<HorzScaleItem> | HistogramData<HorzScaleItem>> {
 	return (data as Partial<LineData<HorzScaleItem>>).value !== undefined;
@@ -235,7 +259,17 @@ export interface SeriesDataItemTypeMap<HorzScaleItem = Time> {
 	Custom: CustomData<HorzScaleItem> | CustomSeriesWhitespaceData<HorzScaleItem>;
 }
 
-export interface DataUpdatesConsumer<TSeriesType extends SeriesType, HorzScaleItem = Time> {
-	applyNewData(series: Series<TSeriesType>, data: SeriesDataItemTypeMap<HorzScaleItem>[TSeriesType][]): void;
-	updateData(series: Series<TSeriesType>, data: SeriesDataItemTypeMap<HorzScaleItem>[TSeriesType], historicalUpdate: boolean): void;
+export interface DataUpdatesConsumer<
+	TSeriesType extends SeriesType,
+	HorzScaleItem = Time
+> {
+	applyNewData(
+		series: Series<TSeriesType>,
+		data: SeriesDataItemTypeMap<HorzScaleItem>[TSeriesType][]
+	): void;
+	updateData(
+		series: Series<TSeriesType>,
+		data: SeriesDataItemTypeMap<HorzScaleItem>[TSeriesType],
+		historicalUpdate: boolean
+	): void;
 }

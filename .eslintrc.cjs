@@ -1,11 +1,29 @@
 function getNamingConventionRules(additionalDefaultFormats = []) {
 	return [
-		{ selector: 'default', format: ['camelCase', ...additionalDefaultFormats], leadingUnderscore: 'forbid', trailingUnderscore: 'forbid' },
-		{ selector: 'variable', format: ['camelCase', 'UPPER_CASE', ...additionalDefaultFormats] },
+		{
+			selector: 'default',
+			format: ['camelCase', ...additionalDefaultFormats],
+			leadingUnderscore: 'forbid',
+			trailingUnderscore: 'forbid',
+		},
+		{
+			selector: 'variable',
+			format: ['camelCase', 'UPPER_CASE', ...additionalDefaultFormats],
+		},
 		{ selector: 'typeLike', format: ['PascalCase'] },
 		{ selector: 'enumMember', format: ['PascalCase'] },
-		{ selector: 'memberLike', modifiers: ['private'], leadingUnderscore: 'require', format: ['camelCase'] },
-		{ selector: 'memberLike', modifiers: ['protected'], leadingUnderscore: 'require', format: ['camelCase'] },
+		{
+			selector: 'memberLike',
+			modifiers: ['private'],
+			leadingUnderscore: 'require',
+			format: ['camelCase'],
+		},
+		{
+			selector: 'memberLike',
+			modifiers: ['protected'],
+			leadingUnderscore: 'require',
+			format: ['camelCase'],
+		},
 		{
 			selector: 'property',
 			format: ['PascalCase'],
@@ -57,10 +75,7 @@ module.exports = {
 			version: require('./website/package.json').dependencies.react.slice(1),
 		},
 	},
-	extends: [
-		'eslint:recommended',
-		'plugin:react/recommended',
-	],
+	extends: ['eslint:recommended', 'plugin:react/recommended'],
 	parserOptions: {
 		ecmaVersion: 2020,
 		sourceType: 'module',
@@ -119,10 +134,17 @@ module.exports = {
 				'no-unused-expressions': 'error',
 
 				// disallow declaration of variables that are not used in the code
-				'no-unused-vars': ['error', { vars: 'local', args: 'none', ignoreRestSiblings: true }],
+				'no-unused-vars': [
+					'error',
+					{ vars: 'local', args: 'none', ignoreRestSiblings: true },
+				],
 
 				// specify whether double or single quotes should be used
-				quotes: ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
+				quotes: [
+					'error',
+					'single',
+					{ avoidEscape: true, allowTemplateLiterals: true },
+				],
 
 				// require or disallow use of semicolons instead of ASI
 				semi: ['error', 'always'],
@@ -138,9 +160,7 @@ module.exports = {
 			settings: {
 				'mdx/code-blocks': true,
 			},
-			extends: [
-				'plugin:mdx/recommended',
-			],
+			extends: ['plugin:mdx/recommended'],
 		},
 		{
 			files: [
@@ -261,7 +281,11 @@ module.exports = {
 						default: 'array',
 					},
 				],
-				'@typescript-eslint/brace-style': ['error', '1tbs', { allowSingleLine: true }],
+				'@typescript-eslint/brace-style': [
+					'error',
+					'1tbs',
+					{ allowSingleLine: true },
+				],
 				'@typescript-eslint/consistent-type-assertions': [
 					'error',
 					{
@@ -269,8 +293,14 @@ module.exports = {
 						objectLiteralTypeAssertions: 'never',
 					},
 				],
-				'@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
-				'@typescript-eslint/dot-notation': ['error', { allowPattern: '^(layout|handleScroll|handleScale)$' }],
+				'@typescript-eslint/consistent-type-definitions': [
+					'error',
+					'interface',
+				],
+				'@typescript-eslint/dot-notation': [
+					'error',
+					{ allowPattern: '^(layout|handleScroll|handleScale)$' },
+				],
 				'@typescript-eslint/explicit-member-accessibility': [
 					'error',
 					{
@@ -336,12 +366,13 @@ module.exports = {
 				'@typescript-eslint/prefer-readonly': 'off', // TODO
 				'@typescript-eslint/promise-function-async': 'off',
 				'@typescript-eslint/restrict-template-expressions': 'off',
-				'@typescript-eslint/quotes': ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
-				'@typescript-eslint/restrict-plus-operands': 'off',
-				'@typescript-eslint/semi': [
+				'@typescript-eslint/quotes': [
 					'error',
-					'always',
+					'single',
+					{ avoidEscape: true, allowTemplateLiterals: true },
 				],
+				'@typescript-eslint/restrict-plus-operands': 'off',
+				'@typescript-eslint/semi': ['error', 'always'],
 				'@typescript-eslint/strict-boolean-expressions': 'off',
 				'@typescript-eslint/triple-slash-reference': [
 					'off',
@@ -391,12 +422,7 @@ module.exports = {
 							],
 
 							// tslint core
-							align: [
-								true,
-								'parameters',
-								'arguments',
-								'statements',
-							],
+							align: [true, 'parameters', 'arguments', 'statements'],
 							'ordered-imports': [
 								true,
 								{
@@ -618,13 +644,16 @@ module.exports = {
 		'arrow-spacing': ['error', { before: true, after: true }],
 
 		// require trailing commas in multiline object literals
-		'comma-dangle': ['error', {
-			arrays: 'always-multiline',
-			objects: 'always-multiline',
-			imports: 'always-multiline',
-			exports: 'always-multiline',
-			functions: 'never',
-		}],
+		'comma-dangle': [
+			'error',
+			{
+				arrays: 'always-multiline',
+				objects: 'always-multiline',
+				imports: 'always-multiline',
+				exports: 'always-multiline',
+				functions: 'never',
+			},
+		],
 
 		// disallow duplicate module imports
 		'no-duplicate-imports': 'error',
@@ -694,15 +723,18 @@ module.exports = {
 		'key-spacing': ['error', { beforeColon: false, afterColon: true }],
 
 		// require a space before & after certain keywords
-		'keyword-spacing': ['error', {
-			before: true,
-			after: true,
-			overrides: {
-				return: { after: true },
-				throw: { after: true },
-				case: { after: true },
+		'keyword-spacing': [
+			'error',
+			{
+				before: true,
+				after: true,
+				overrides: {
+					return: { after: true },
+					throw: { after: true },
+					case: { after: true },
+				},
 			},
-		}],
+		],
 
 		// enforce a maximum number of parameters in function definitions
 		'max-params': ['error', { max: 6 }],
@@ -728,7 +760,11 @@ module.exports = {
 		'no-new-object': 'error',
 
 		// disallow specified syntax
-		'no-restricted-syntax': ['error', 'ForInStatement', `BinaryExpression[operator='in']`],
+		'no-restricted-syntax': [
+			'error',
+			'ForInStatement',
+			`BinaryExpression[operator='in']`,
+		],
 
 		// disallow space between function identifier and application
 		'no-spaced-func': 'error',
@@ -763,7 +799,11 @@ module.exports = {
 
 		// require quotes around object literal property names
 		// http://eslint.org/docs/rules/quote-props.html
-		'quote-props': ['error', 'as-needed', { keywords: false, unnecessary: true, numbers: false }],
+		'quote-props': [
+			'error',
+			'as-needed',
+			{ keywords: false, unnecessary: true, numbers: false },
+		],
 
 		// enforce spacing before and after semicolons
 		'semi-spacing': ['error', { before: false, after: true }],
@@ -773,7 +813,10 @@ module.exports = {
 
 		// require or disallow space before function opening parenthesis
 		// https://github.com/eslint/eslint/blob/master/docs/rules/space-before-function-paren.md
-		'space-before-function-paren': ['error', { anonymous: 'never', named: 'never' }],
+		'space-before-function-paren': [
+			'error',
+			{ anonymous: 'never', named: 'never' },
+		],
 
 		// require or disallow spaces inside parentheses
 		'space-in-parens': ['error', 'never'],
@@ -782,10 +825,14 @@ module.exports = {
 		'space-infix-ops': 'error',
 
 		// require or disallow a space immediately following the // or /* in a comment
-		'spaced-comment': ['error', 'always', {
-			exceptions: ['-', '+'],
-			markers: ['=', '!', '/'], // space here to support sprockets directives
-		}],
+		'spaced-comment': [
+			'error',
+			'always',
+			{
+				exceptions: ['-', '+'],
+				markers: ['=', '!', '/'], // space here to support sprockets directives
+			},
+		],
 
 		'jsdoc/check-indentation': 'error',
 

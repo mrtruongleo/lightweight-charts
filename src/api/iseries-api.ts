@@ -33,7 +33,8 @@ export type DataChangedHandler = (scope: DataChangedScope) => void;
  */
 // actually range might be either exist or not
 // but to avoid hard-readable type let's say every part of range is optional
-export interface BarsInfo<HorzScaleItem> extends Partial<IRange<HorzScaleItem>> {
+export interface BarsInfo<HorzScaleItem>
+	extends Partial<IRange<HorzScaleItem>> {
 	/**
 	 * The number of bars before the start of the range.
 	 * Positive value means that there are some bars before (out of logical range from the left) the {@link IRange.from} logical index in the series.
@@ -57,8 +58,8 @@ export interface ISeriesApi<
 	HorzScaleItem = Time,
 	TData = SeriesDataItemTypeMap<HorzScaleItem>[TSeriesType],
 	TOptions = SeriesOptionsMap[TSeriesType],
-	TPartialOptions = SeriesPartialOptionsMap[TSeriesType],
-	> {
+	TPartialOptions = SeriesPartialOptionsMap[TSeriesType]
+> {
 	/**
 	 * Returns current price formatter
 	 *
@@ -72,7 +73,7 @@ export interface ISeriesApi<
 	 * @param price - Input price to be converted
 	 * @returns Pixel coordinate of the price level on the chart
 	 */
-	priceToCoordinate(price: number): Coordinate | null;
+	priceToCoordinate(price: number | null): Coordinate | null;
 
 	/**
 	 * Converts specified coordinate to price value according to the series price scale
@@ -199,7 +200,10 @@ export interface ISeriesApi<
 	 * const originalData = series.dataByIndex(10, LightweightCharts.MismatchDirection.NearestLeft);
 	 * ```
 	 */
-	dataByIndex(logicalIndex: number, mismatchDirection?: MismatchDirection): TData | null;
+	dataByIndex(
+		logicalIndex: number,
+		mismatchDirection?: MismatchDirection
+	): TData | null;
 
 	/**
 	 * Returns all the bar data for the series.
