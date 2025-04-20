@@ -43,8 +43,13 @@ export class Magnet {
 		const y = defaultPriceScale.priceToCoordinate(price, firstValue);
 
 		// get all serieses from the pane
-		const serieses: readonly ISeries<SeriesType>[] = pane.dataSources().filter(
-			((ds: IPriceDataSource) => (ds instanceof Series)) as (ds: IPriceDataSource) => ds is Series<SeriesType>);
+		const serieses: readonly ISeries<SeriesType>[] = pane
+			.dataSources()
+			.filter(
+				((ds: IPriceDataSource) => ds instanceof Series) as (
+					ds: IPriceDataSource
+				) => ds is Series<SeriesType>
+			);
 
 		const candidates = serieses.reduce(
 			(acc: Coordinate[], series: ISeries<SeriesType>) => {
@@ -64,20 +69,31 @@ export class Magnet {
 
 				// convert bar to pixels
 				const firstPrice = ensure(series.firstValue());
-				const plotRowKeys = this._options.mode === CrosshairMode.MagnetOHLC
-					? magnetOHLCPlotRowKeys
-					: magnetPlotRowKeys;
+				const plotRowKeys =
+					this._options.mode === CrosshairMode.MagnetOHLC
+						? magnetOHLCPlotRowKeys
+						: magnetPlotRowKeys;
 				return acc.concat(
-					plotRowKeys.map((key: PlotRowValueIndex) => ps.priceToCoordinate(bar.value[key], firstPrice.value))
+					plotRowKeys
+						.map((key: PlotRowValueIndex) => bar.value[key]) // Get the price values
+						.filter(
+							(priceValue: unknown): priceValue is number => priceValue !== null
+						) // Filter out nulls
+						.map((priceValue: number) =>
+							ps.priceToCoordinate(priceValue, firstPrice.value)
+						) // Map valid prices to coordinates
 				);
 			},
-			[] as Coordinate[]);
+			[] as Coordinate[]
+		);
 
 		if (candidates.length === 0) {
 			return res;
 		}
 
-		candidates.sort((y1: Coordinate, y2: Coordinate) => Math.abs(y1 - y) - Math.abs(y2 - y));
+		candidates.sort(
+			(y1: Coordinate, y2: Coordinate) => Math.abs(y1 - y) - Math.abs(y2 - y)
+		);
 
 		const nearest = candidates[0];
 		res = defaultPriceScale.coordinateToPrice(nearest, firstValue);

@@ -8,13 +8,23 @@ import { clone, merge } from '../helpers/strict-type-checks';
 import { BarPrice } from '../model/bar';
 import { Coordinate } from '../model/coordinate';
 import { CustomPriceLine } from '../model/custom-price-line';
-import { DataUpdatesConsumer, SeriesDataItemTypeMap, WhitespaceData } from '../model/data-consumer';
-import { checkItemsAreOrdered, checkPriceLineOptions, checkSeriesValuesType } from '../model/data-validators';
+import {
+	DataUpdatesConsumer,
+	SeriesDataItemTypeMap,
+	WhitespaceData,
+} from '../model/data-consumer';
+import {
+	checkItemsAreOrdered,
+	checkPriceLineOptions,
+} from '../model/data-validators';
 import { IHorzScaleBehavior } from '../model/ihorz-scale-behavior';
 import { ISeriesPrimitiveBase } from '../model/iseries-primitive';
 import { Pane } from '../model/pane';
 import { MismatchDirection } from '../model/plot-list';
-import { CreatePriceLineOptions, PriceLineOptions } from '../model/price-line-options';
+import {
+	CreatePriceLineOptions,
+	PriceLineOptions,
+} from '../model/price-line-options';
 import { RangeImpl } from '../model/range-impl';
 import { Series } from '../model/series';
 import { SeriesPlotRow } from '../model/series-data';
@@ -32,7 +42,12 @@ import { type IChartApiBase } from './ichart-api';
 import { IPaneApi } from './ipane-api';
 import { IPriceLine } from './iprice-line';
 import { IPriceScaleApi } from './iprice-scale-api';
-import { BarsInfo, DataChangedHandler, DataChangedScope, ISeriesApi } from './iseries-api';
+import {
+	BarsInfo,
+	DataChangedHandler,
+	DataChangedScope,
+	ISeriesApi,
+} from './iseries-api';
 import { ISeriesPrimitive } from './iseries-primitive-api';
 import { priceLineOptionsDefaults } from './options/price-line-options-defaults';
 import { PriceLine } from './price-line-api';
@@ -44,14 +59,19 @@ export class SeriesApi<
 	TOptions extends SeriesOptionsMap[TSeriesType] = SeriesOptionsMap[TSeriesType],
 	TPartialOptions extends SeriesPartialOptionsMap[TSeriesType] = SeriesPartialOptionsMap[TSeriesType]
 > implements
-	ISeriesApi<TSeriesType, HorzScaleItem, TData, TOptions, TPartialOptions>, IDestroyable {
+		ISeriesApi<TSeriesType, HorzScaleItem, TData, TOptions, TPartialOptions>,
+		IDestroyable {
 	protected _series: Series<TSeriesType>;
-	protected _dataUpdatesConsumer: DataUpdatesConsumer<TSeriesType, HorzScaleItem>;
+	protected _dataUpdatesConsumer: DataUpdatesConsumer<
+		TSeriesType,
+		HorzScaleItem
+	>;
 	protected readonly _chartApi: IChartApiBase<HorzScaleItem>;
 
 	private readonly _priceScaleApiProvider: IPriceScaleApiProvider<HorzScaleItem>;
 	private readonly _horzScaleBehavior: IHorzScaleBehavior<HorzScaleItem>;
-	private readonly _dataChangedDelegate: Delegate<DataChangedScope> = new Delegate();
+	private readonly _dataChangedDelegate: Delegate<DataChangedScope> =
+		new Delegate();
 	private readonly _paneApiGetter: (pane: Pane) => IPaneApi<HorzScaleItem>;
 
 	public constructor(
@@ -92,10 +112,14 @@ export class SeriesApi<
 		if (firstValue === null) {
 			return null;
 		}
-		return this._series.priceScale().coordinateToPrice(coordinate as Coordinate, firstValue.value);
+		return this._series
+			.priceScale()
+			.coordinateToPrice(coordinate as Coordinate, firstValue.value);
 	}
 
-	public barsInLogicalRange(range: IRange<number> | null): BarsInfo<HorzScaleItem> | null {
+	public barsInLogicalRange(
+		range: IRange<number> | null
+	): BarsInfo<HorzScaleItem> | null {
 		if (range === null) {
 			return null;
 		}
@@ -110,8 +134,14 @@ export class SeriesApi<
 			return null;
 		}
 
-		const dataFirstBarInRange = bars.search(correctedRange.left(), MismatchDirection.NearestRight);
-		const dataLastBarInRange = bars.search(correctedRange.right(), MismatchDirection.NearestLeft);
+		const dataFirstBarInRange = bars.search(
+			correctedRange.left(),
+			MismatchDirection.NearestRight
+		);
+		const dataLastBarInRange = bars.search(
+			correctedRange.right(),
+			MismatchDirection.NearestLeft
+		);
 
 		const dataFirstIndex = ensureNotNull(bars.firstIndex());
 		const dataLastIndex = ensureNotNull(bars.lastIndex());
@@ -120,20 +150,27 @@ export class SeriesApi<
 		// e.g. let's say we have series with data [0..10, 30..60]
 		// and we request bars info in range [15, 25]
 		// thus, dataFirstBarInRange will be with index 30 and dataLastBarInRange with 10
-		if (dataFirstBarInRange !== null && dataLastBarInRange !== null && dataFirstBarInRange.index > dataLastBarInRange.index) {
+		if (
+			dataFirstBarInRange !== null &&
+			dataLastBarInRange !== null &&
+			dataFirstBarInRange.index > dataLastBarInRange.index
+		) {
 			return {
 				barsBefore: range.from - dataFirstIndex,
 				barsAfter: dataLastIndex - range.to,
 			};
 		}
 
-		const barsBefore = (dataFirstBarInRange === null || dataFirstBarInRange.index === dataFirstIndex)
-			? range.from - dataFirstIndex
-			: dataFirstBarInRange.index - dataFirstIndex;
+		const barsBefore =
+			dataFirstBarInRange === null ||
+			dataFirstBarInRange.index === dataFirstIndex
+				? range.from - dataFirstIndex
+				: dataFirstBarInRange.index - dataFirstIndex;
 
-		const barsAfter = (dataLastBarInRange === null || dataLastBarInRange.index === dataLastIndex)
-			? dataLastIndex - range.to
-			: dataLastIndex - dataLastBarInRange.index;
+		const barsAfter =
+			dataLastBarInRange === null || dataLastBarInRange.index === dataLastIndex
+				? dataLastIndex - range.to
+				: dataLastIndex - dataLastBarInRange.index;
 
 		const result: BarsInfo<HorzScaleItem> = { barsBefore, barsAfter };
 
@@ -148,34 +185,43 @@ export class SeriesApi<
 
 	public setData(data: TData[]): void {
 		checkItemsAreOrdered(data, this._horzScaleBehavior);
-		checkSeriesValuesType(this._series.seriesType(), data);
+		// checkSeriesValuesType(this._series.seriesType(), data);
 
 		this._dataUpdatesConsumer.applyNewData(this._series, data);
 		this._onDataChanged('full');
 	}
 
 	public update(bar: TData, historicalUpdate: boolean = false): void {
-		checkSeriesValuesType(this._series.seriesType(), [bar]);
+		// checkSeriesValuesType(this._series.seriesType(), [bar]);
 
 		this._dataUpdatesConsumer.updateData(this._series, bar, historicalUpdate);
 		this._onDataChanged('update');
 	}
 
-	public dataByIndex(logicalIndex: number, mismatchDirection?: MismatchDirection): TData | null {
-		const data = this._series.bars().search(logicalIndex as unknown as TimePointIndex, mismatchDirection);
+	public dataByIndex(
+		logicalIndex: number,
+		mismatchDirection?: MismatchDirection
+	): TData | null {
+		const data = this._series
+			.bars()
+			.search(logicalIndex as unknown as TimePointIndex, mismatchDirection);
 		if (data === null) {
 			// actually it can be a whitespace
 			return null;
 		}
 
-		const creator = getSeriesDataCreator<TSeriesType, HorzScaleItem>(this.seriesType());
+		const creator = getSeriesDataCreator<TSeriesType, HorzScaleItem>(
+			this.seriesType()
+		);
 		return creator(data) as TData | null;
 	}
 
 	public data(): readonly TData[] {
 		const seriesCreator = getSeriesDataCreator(this.seriesType());
 		const rows = this._series.bars().rows();
-		return rows.map((row: SeriesPlotRow<TSeriesType>) => seriesCreator(row) as TData);
+		return rows.map(
+			(row: SeriesPlotRow<TSeriesType>) => seriesCreator(row) as TData
+		);
 	}
 
 	public subscribeDataChanged(handler: DataChangedHandler): void {
@@ -195,13 +241,19 @@ export class SeriesApi<
 	}
 
 	public priceScale(): IPriceScaleApi {
-		return this._priceScaleApiProvider.priceScale(this._series.priceScale().id(), this.getPane().paneIndex());
+		return this._priceScaleApiProvider.priceScale(
+			this._series.priceScale().id(),
+			this.getPane().paneIndex()
+		);
 	}
 
 	public createPriceLine(options: CreatePriceLineOptions): IPriceLine {
 		checkPriceLineOptions(options);
 
-		const strictOptions = merge(clone(priceLineOptionsDefaults), options) as PriceLineOptions;
+		const strictOptions = merge(
+			clone(priceLineOptionsDefaults),
+			options
+		) as PriceLineOptions;
 		const priceLine = this._series.createPriceLine(strictOptions);
 		return new PriceLine(priceLine);
 	}
@@ -211,7 +263,11 @@ export class SeriesApi<
 	}
 
 	public priceLines(): IPriceLine[] {
-		return this._series.priceLines().map((priceLine: CustomPriceLine): IPriceLine => new PriceLine(priceLine));
+		return this._series
+			.priceLines()
+			.map(
+				(priceLine: CustomPriceLine): IPriceLine => new PriceLine(priceLine)
+			);
 	}
 
 	public seriesType(): TSeriesType {

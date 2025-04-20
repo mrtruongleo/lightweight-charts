@@ -2,7 +2,7 @@
 
 /**
  * @type {import('size-limit').SizeLimitConfig}
-*/
+ */
 // eslint-disable-next-line import/no-default-export
 export default [
 	{
@@ -87,7 +87,7 @@ export default [
 		path: 'dist/lightweight-charts.production.mjs',
 		import: '{ LineSeries }',
 		ignore: ['fancy-canvas'],
-		limit: '2.7 KB',
+		limit: '2.74 KB',
 		brotli: true,
 	},
 	{

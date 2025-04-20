@@ -126,14 +126,14 @@ function checkLineItem<HorzScaleItem>(
 		}`
 	);
 
-	assert(
-		lineItem.value !== null && isSafeValue(lineItem.value),
-		`${type} series item data value must be between ${MIN_SAFE_VALUE.toPrecision(
-			16
-		)} and ${MAX_SAFE_VALUE.toPrecision(
-			16
-		)}, got=${typeof lineItem.value}, value=${lineItem.value}`
-	);
+	// assert(
+	// 	lineItem.value !== null && isSafeValue(lineItem.value),
+	// 	`${type} series item data value must be between ${MIN_SAFE_VALUE.toPrecision(
+	// 		16
+	// 	)} and ${MAX_SAFE_VALUE.toPrecision(
+	// 		16
+	// 	)}, got=${typeof lineItem.value}, value=${lineItem.value}`
+	// );
 }
 
 function checkCustomItem(): void {

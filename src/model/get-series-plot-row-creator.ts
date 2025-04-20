@@ -31,7 +31,7 @@ function getColoredLineBasedSeriesPlotRow<HorzScaleItem>(
 	const res: Mutable<SeriesPlotRow<'Line' | 'Histogram'>> = {
 		index,
 		time,
-		value: [val ?? 0, val ?? 0, val ?? 0, val ?? 0],
+		value: [val, val, val, val],
 		originalTime,
 	};
 
@@ -53,7 +53,7 @@ function getAreaSeriesPlotRow<HorzScaleItem>(
 	const res: Mutable<SeriesPlotRow<'Area'>> = {
 		index,
 		time,
-		value: [val ?? 0, val ?? 0, val ?? 0, val ?? 0],
+		value: [val, val, val, val],
 		originalTime,
 	};
 
@@ -83,7 +83,7 @@ function getBaselineSeriesPlotRow<HorzScaleItem>(
 	const res: Mutable<SeriesPlotRow<'Baseline'>> = {
 		index,
 		time,
-		value: [val ?? 0, val ?? 0, val ?? 0, val ?? 0],
+		value: [val, val, val, val],
 		originalTime,
 	};
 

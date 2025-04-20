@@ -140,19 +140,19 @@ export interface OhlcData<HorzScaleItem = Time>
 	/**
 	 * The open price.
 	 */
-	open: number;
+	open: number | null;
 	/**
 	 * The high price.
 	 */
-	high: number;
+	high: number | null;
 	/**
 	 * The low price.
 	 */
-	low: number;
+	low: number | null;
 	/**
 	 * The close price.
 	 */
-	close: number;
+	close: number | null;
 }
 
 /**
